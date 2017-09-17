@@ -1,4 +1,5 @@
 {
   "2.7.0": "https://github.com/LootApp/mobile-sdk-ios/releases/download/2.7.0/JumioCore.framework.zip",
-  "2.8.0": "https://github.com/LootApp/mobile-sdk-ios/releases/download/2.8.0/JumioCore.framework.zip"
+  "2.8.0": "https://github.com/LootApp/mobile-sdk-ios/releases/download/2.8.0/JumioCore.framework.zip",
+  "2.8.1.beta": "https://github.com/LootApp/mobile-sdk-ios/releases/download/2.8.1.beta/JumioCore.framework.zip"
 }
