@@ -17,6 +17,7 @@ FOUNDATION_EXPORT const unsigned char JumioCoreVersionString[];
 #import <JumioCore/JMAutolayoutUtilities.h>
 #import <JumioCore/JMAlertView.h>
 #import <JumioCore/JMAlertViewController.h>
+#import <JumioCore/UIAlertController+JMPresenting.h>
 #import <JumioCore/JMAppearance.h>
 #import <JumioCore/JMBaseServerTask+Utilities.h>
 #import <JumioCore/JMBaseServerTask.h>
@@ -44,6 +45,7 @@ FOUNDATION_EXPORT const unsigned char JumioCoreVersionString[];
 #import <JumioCore/JMDeviceOrientationChangeNotifier.h>
 #import <JumioCore/JMEndpoint.h>
 #import <JumioCore/JMNavigationController.h>
+#import <JumioCore/JMOfflineManager.h>
 
 //Utilities
 #import <JumioCore/JMUtilities.h>
