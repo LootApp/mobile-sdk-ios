@@ -44,8 +44,7 @@ platform :ios do
           tag_name: target_version,
           upload_assets: framework_binaries,
           name: "",
-          description: "",
-          is_draft: true
+          description: ""
       )
   end
 
