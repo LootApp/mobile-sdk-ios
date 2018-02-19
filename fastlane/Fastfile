@@ -1,5 +1,5 @@
 fastlane_require 'json'
-fastlane_require 'zip'
+fastlane_require 'fileutils'
 fastlane_version "2.81.0"
 default_platform :ios
 
@@ -91,28 +91,40 @@ platform :ios do
 
   private_lane :zip_frameworks do |options|
     # Jumio
-      zip_file_helper(
-        framework_name: 'JumioCore',
-        framework_path: 'frameworks/JumioCore.framework',
-      )
+    FileUtils.mkdir_p "../export/Carthage/iOS"
+    FileUtils.cp_r "../frameworks/JumioCore.framework", "../export/Carthage/iOS/JumioCore.framework"
+    zip(
+      path: "export/Carthage",
+      output_path: "export/JumioCore.framework.zip"
+    )
+    FileUtils.remove_dir("../export/Carthage") unless !File.directory?("../export/Carthage")
 
-      # Netverify
-      zip_file_helper(
-        framework_name: 'Netverify',
-        framework_path: 'frameworks/Netverify.framework',
-      )
+    # Netverify
+    FileUtils.mkdir_p "../export/Carthage/iOS"
+    FileUtils.cp_r "../frameworks/Netverify.framework", "../export/Carthage/iOS/Netverify.framework"
+    zip(
+      path: "export/Carthage",
+      output_path: "export/Netverify.framework.zip"
+    )
+    FileUtils.remove_dir("../export/Carthage") unless !File.directory?("../export/Carthage")
 
-      # Microblink
-      zip_file_helper(
-        framework_name: 'Microblink',
-        framework_path: 'frameworks/Microblink.framework',
-      )
+    # Microblink
+    FileUtils.mkdir_p "../export/Carthage/iOS"
+    FileUtils.cp_r "../frameworks/Microblink.framework", "../export/Carthage/iOS/Microblink.framework"
+    zip(
+      path: "export/Carthage",
+      output_path: "export/Microblink.framework.zip"
+    )
+    FileUtils.remove_dir("../export/Carthage") unless !File.directory?("../export/Carthage")
 
-      # Umoove
-      zip_file_helper(
-        framework_name: 'Umoove',
-        framework_path: 'frameworks/Umoove.framework',
-      )
+    # Umoove
+    FileUtils.mkdir_p "../export/Carthage/iOS"
+    FileUtils.cp_r "../frameworks/Umoove.framework", "../export/Carthage/iOS/Umoove.framework"
+    zip(
+      path: "export/Carthage",
+      output_path: "export/Umoove.framework.zip"
+    )
+    FileUtils.remove_dir("../export/Carthage") unless !File.directory?("../export/Carthage")
   end
 
   after_all do |lane|
