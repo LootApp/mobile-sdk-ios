@@ -10,7 +10,7 @@ module Fastlane
           
           zipfile = "export/#{params[:framework_name]}.framework.zip"
           Zip::File.open(zipfile, Zip::File::CREATE) do |zip|
-            zip.add("#{params[:framework_name]}.framework",params[:framework_path])
+            zip.add("iOS/#{params[:framework_name]}.framework",params[:framework_path])
           end
         end
   
