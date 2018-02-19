@@ -3,8 +3,7 @@ fastlane_require 'zip'
 fastlane_version "2.81.0"
 default_platform :ios
 
-FRAMEWORK_NAME = "mobile-sdk-ios".freeze
-REPOSITORY_NAME = "Loot-UIKit".freeze
+REPOSITORY_NAME = "mobile-sdk-ios".freeze
 
 platform :ios do
 
