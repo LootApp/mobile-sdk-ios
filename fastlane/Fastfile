@@ -34,8 +34,8 @@ platform :ios do
       zip_frameworks
       
       # Collect the binaries
-      framework_binaries = Dir["../export/*"]
-
+      framework_binaries = Dir["../export/*"].map { |entry| framework_binary = File.join(File.expand_path('..', __FILE__),entry)}
+      
       raise "No binary found to upload #{framework_binary}" unless framework_binaries.any?
 
       set_github_release(
