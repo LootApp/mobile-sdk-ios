@@ -3,4 +3,13 @@ sample/JumioMobileSDKSample.xcodeproj/xcuserdata/*
 sample/JumioMobileSDKSample.xcodeproj/project.xcworkspace/xcuserdata/*
 */.DS_Store
 .DS_Store
-
+export/
+## Fastlane
+fastlane/screenshots/
+fastlane/test_output/
+fastlane/*.xml
+fastlane/*.md
+fastlane/*.html
+*.zip
+*.mobileprovision
+fastlane/test_output

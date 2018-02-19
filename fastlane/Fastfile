@@ -1,20 +1,12 @@
-
-fastlane_version "1.37.0"
-
+fastlane_require 'json'
+fastlane_require 'zip'
+fastlane_version "2.81.0"
 default_platform :ios
 
-FRAMEWORK_NAME = "LootUIKit".freeze
+FRAMEWORK_NAME = "mobile-sdk-ios".freeze
 REPOSITORY_NAME = "Loot-UIKit".freeze
 
 platform :ios do
-
-  lane :merge_upstream do 
-    result = sh("git remote")
-    sh("git remote add upstream git@github.com:Jumio/mobile-sdk-ios.git") unless result.include? 'upstream'
-    sh("git fetch upstream")
-    sh("git checkout master")
-    sh("git merge -X theirs upstream/master")
-  end
 
   desc "Release new version"
   lane :release do |options|
@@ -24,14 +16,9 @@ platform :ios do
       ensure_git_branch
       ensure_git_status_clean
       
-      # Increment version
-      increment_version_number(version_number: target_version)  
-      
-      # Create Carthage framework
-      Actions.sh("cd .. && carthage build --no-skip-current && carthage archive #{FRAMEWORK_NAME}")
-      framework_binary = File.join(File.expand_path('../..', __FILE__),"#{FRAMEWORK_NAME}.framework.zip")
-      raise "No binary found to upload #{framework_binary}" if File.file?(framework_binary) == false
+      add_entries(version: target_version)
 
+      # Commit and push 
       unless (`git status --porcelain`).empty?
           git_add
           git_commit(path: ".", message: "New release version bump") 
@@ -40,13 +27,93 @@ platform :ios do
           push_to_git_remote
       end
 
+      # Make sure export is empty 
+      FileUtils.remove_dir("../export") unless !File.directory?("../export")
+      Dir.mkdir "../export"
+      
+      # Zip the frameworks
+      zip_frameworks
+      
+      # Collect the binaries
+      framework_binaries = Dir["../export/*"]
+
+      raise "No binary found to upload #{framework_binary}" unless framework_binaries.any?
+
       set_github_release(
           repository_name: "LootApp/#{REPOSITORY_NAME}",
           api_token: ENV['GITHUB_API_TOKEN'],
           tag_name: target_version,
-          upload_assets: [ framework_binary ],
+          upload_assets: framework_binaries,
           name: "",
-          description: ""
+          description: "",
+          is_draft: true
+      )
+  end
+
+  lane :merge_upstream do 
+    result = sh("git remote")
+    sh("git remote add upstream git@github.com:Jumio/mobile-sdk-ios.git") unless result.include? 'upstream'
+    sh("git fetch upstream")
+    sh("git checkout master")
+    sh("git merge -X theirs upstream/master")
+  end
+
+  private_lane :add_entries do |options|
+    target_version = options[:version]
+    raise "The version is missed. Use `fastlane release version:{version_number}`.`" if target_version.nil?
+
+    # Jumio
+      insert_entry(
+        file_path: "JumioCore.json",
+        framework_name: "JumioCore",
+        release_version: target_version
+      )
+
+      # Netverify
+      insert_entry(
+        file_path: "Netverify.json",
+        framework_name: "Netverify",
+        release_version: target_version
+      )
+
+      # Microblink
+      insert_entry(
+        file_path: "Microblink.json",
+        framework_name: "Microblink",
+        release_version: target_version
+      )
+
+      # Umoove
+      insert_entry(
+        file_path: "Umoove.json",
+        framework_name: "Umoove",
+        release_version: target_version
+      )
+  end
+
+  private_lane :zip_frameworks do |options|
+    # Jumio
+      zip_file_helper(
+        framework_name: 'JumioCore',
+        framework_path: 'frameworks/JumioCore.framework',
+      )
+
+      # Netverify
+      zip_file_helper(
+        framework_name: 'Netverify',
+        framework_path: 'frameworks/Netverify.framework',
+      )
+
+      # Microblink
+      zip_file_helper(
+        framework_name: 'Microblink',
+        framework_path: 'frameworks/Microblink.framework',
+      )
+
+      # Umoove
+      zip_file_helper(
+        framework_name: 'Umoove',
+        framework_path: 'frameworks/Umoove.framework',
       )
   end
 
@@ -57,4 +124,5 @@ platform :ios do
   error do |lane, exception|
 
   end
+
 end
