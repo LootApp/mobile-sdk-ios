@@ -110,10 +110,10 @@ platform :ios do
 
     # Microblink
     FileUtils.mkdir_p "../export/Carthage/iOS"
-    FileUtils.cp_r "../frameworks/Microblink.framework", "../export/Carthage/iOS/Microblink.framework"
+    FileUtils.cp_r "../frameworks/MicroBlink.framework", "../export/Carthage/iOS/MicroBlink.framework"
     zip(
       path: "export/Carthage",
-      output_path: "export/Microblink.framework.zip"
+      output_path: "export/MicroBlink.framework.zip"
     )
     FileUtils.remove_dir("../export/Carthage") unless !File.directory?("../export/Carthage")
 
