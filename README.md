@@ -8,22 +8,21 @@
 
 
 # Release notes
+All changes apply to Netverify and Fastfill
 
-Applies to all products. SDK version: 2.10.0
-
-__This version contains a security fix. We advice to update to this version immediately, latest until May 1, 2018.__
+SDK version: 2.11.0
 
 #### Changes
-* Added an additional network security layer
-* Changed handling of frameworks to use a single artifact instead of two
-* Moved podspec file to public Specs repository on Github
+* Added new Custom UI functionality
+* Added support for legal masking in Germany
+* Added support for new gender code X  (gender-unspecified) on MRZ documents
+* Updated error code schema 
 
 #### Fixes
-* Fixed a minor security issue
-* Various UI fixes for iPhone X
-* Miscellaneous bugfixes
-* Stability improvements
+* Fixed handling for British Columbia driving licenses
+* Various smaller bug fixes/improvements in all products
 
+__Version 2.10.0 and above contain a security fix. We advice to update immediately, latest until May 1, 2018.__
 
 # Basic Setup
 
@@ -62,10 +61,10 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 use_frameworks! # Required for proper framework handling
 
-pod 'JumioMobileSDK', '~>2.10' # If you use BAM Checkout along Netverify in your app. Frameworks supporting device architectures only.
+pod 'JumioMobileSDK', '~>2.11' # If you use BAM Checkout along Netverify in your app. Frameworks supporting device architectures only.
 
-pod 'JumioMobileSDK/Netverify', '~>2.10' # Specify Netverify as subspec to only use Netverify, Fastfill or Document Verification
-pod 'JumioMobileSDK/BAMCheckout', '~>2.10' # Specify BAMCheckout as subspec to only use BAM Checkout
+pod 'JumioMobileSDK/Netverify', '~>2.11' # Specify Netverify as subspec to only use Netverify, Fastfill or Document Verification
+pod 'JumioMobileSDK/BAMCheckout', '~>2.11' # Specify BAMCheckout as subspec to only use BAM Checkout
 ```
 
 Install the pod to your project via Terminal:
@@ -78,14 +77,16 @@ The Jumio Mobile SDK consists of several dynamic frameworks. Add specific framew
 
 The following table shows which frameworks have to be added:
 
-| Product | JumioCore | BAMCheckout | Netverify | MicroBlink | UMoove |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| Fastfill & Netverify | x |  | x | x | x |
-| Document Verification | x |  | x |  |  |
-| BAM Checkout credit card scanning | x | x |  |  |  |
-| BAM Checkout credit card + ID scanning | x | x | x | x | x |
+| Product | Size | JumioCore | BAMCheckout | Netverify | MicroBlink | UMoove |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| Fastfill & Netverify | 17 MB | x |  | x | x | x |
+| Document Verification | 7.5 MB | x |  | x |  |  |
+| BAM Checkout credit card scanning | 7 MB | x | x |  |  |  |
+| BAM Checkout credit card<br/>+ ID scanning | 23 MB | x | x | x | x | x |
 
-In case you use a combination of these products, make sure to add frameworks only once to your app and that those frameworks are linked and embedded in your Xcode project.
+In case you use a combination of these products, make sure to add frameworks only once to your app and that those frameworks are linked and embedded in your Xcode project. For Document Verification, the frameworks `MicroBlink` and `UMoove` can be removed but this requires Bitcode to be disabled in your app.
+
+The size values in the table above depict the decompressed install size required on a device. It can be compared with the Estimated App Store files size. The size value can vary by a few percent, depending on the actual device used.
 
 The framework binaries are available with support for device and simulator architecture. Make sure to remove the simulator architecture from our frameworks for app submissions to the AppStore. If this step is not performed, your submission will be rejection by Apple. Add the following code snippet as run script build phase to your app project and ensure that it is executed after the frameworks are embedded. Please see the required setup in our sample project.
 
@@ -122,7 +123,7 @@ Our SDK supports Accessibility. Visually impaired users can enable __VoiceOver__
 # Support
 
 ## Previous version
-The previous release version 2.9.2 of the Jumio Mobile SDK is supported until 2018-05-01.
+The previous release version 2.11.0 of the Jumio Mobile SDK is supported until 2018-07-04.
 
 In case the support period is expired, no bug fixes are provided anymore (typically fixed in the upcoming versions). The SDK will keep functioning (until further notice).
 

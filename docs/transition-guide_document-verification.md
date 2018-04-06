@@ -2,6 +2,18 @@
 
 # Transition guide for Document Verification
 
+
+## 2.11.0
+
+#### New error codes
+Instead of `NSError` objects we now return `DocumentVerificationError` in `documentVerificationViewController:didFinishWithError:`. 
+
+Please note, that `code` now is a NSString.
+Read more detailed information on this in the [Error Section](integration_document-verification.md#error)
+
+## 2.10.1
+No backward incompatible changes.
+
 ## 2.10.0
 
 #### Changed handling of frameworks to use a single artifact instead of two
