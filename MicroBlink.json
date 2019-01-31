@@ -6,5 +6,6 @@
   "2.9.2": "https://github.com/LootApp/mobile-sdk-ios/releases/download/2.9.2/MicroBlink.framework.zip",
   "2.10.0": "https://github.com/LootApp/mobile-sdk-ios/releases/download/2.10.0/Microblink.framework.zip",
   "2.11.0": "https://github.com/LootApp/mobile-sdk-ios/releases/download/2.11.0/MicroBlink.framework.zip",
-  "2.15.0": "https://github.com/LootApp/mobile-sdk-ios/releases/download/2.15.0/MicroBlink.framework.zip"
+  "2.15.0": "https://github.com/LootApp/mobile-sdk-ios/releases/download/2.15.0/MicroBlink.framework.zip",
+  "2.15.0open": "https://github.com/LootApp/mobile-sdk-ios/releases/download/2.15.0open/MicroBlink.framework.zip"
 }
