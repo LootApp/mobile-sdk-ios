@@ -1,16 +1,23 @@
 //
 //  DocumentVerificationStartViewController.swift
 //
-//  Copyright © 2018 Jumio Corporation All rights reserved.
+//  Copyright © 2019 Jumio Corporation All rights reserved.
 //
 
 import Netverify
 
 class DocumentVerificationStartViewController: StartViewController, DocumentVerificationViewControllerDelegate {
 
-    var documentVerificationViewController:DocumentVerificationViewController?
+    var documentVerificationViewController: DocumentVerificationViewController?
+    @IBOutlet weak var enableExtraction: UISwitch!
     
     func createDocumentVerificationController() -> Void {
+        
+        //prevent SDK to be initialized on Jailbroken devices
+        if JMDeviceInfo.isJailbrokenDevice() {
+            return
+        }
+        
         //Setup the Configuration for DocumentVerification
         let config:DocumentVerificationConfiguration = DocumentVerificationConfiguration()
         //Provide your API token
@@ -27,7 +34,7 @@ class DocumentVerificationStartViewController: StartViewController, DocumentVeri
         config.country = "AUT"
         
         //One of the configured DocumentTypeCodes: BC, BS, CAAP, CB, CCS, CRC, HCC, IC, LAG, LOAP,
-        //MEDC, MOAP, PB, SEL, SENC, SS, STUC, TAC, TR, UB, SSC, USSS, VC, VT, WWCC, CUSTOM
+        //MEDC, MOAP, PB, SEL, SENC, SS, STUC, TAC, TR, UB, SSC, VC, VT, WWCC, CUSTOM
         config.type = "BC"
         
         //The merchant scan reference allows you to identify the scan (max. 100 characters). Note: Must not contain sensitive data like PII (Personally Identifiable Information) or account login.
@@ -48,14 +55,14 @@ class DocumentVerificationStartViewController: StartViewController, DocumentVeri
         //Configure your desired status bar style
         //config.statusBarStyle = UIStatusBarStyle.lightContent
         
-        //Additional information for this scan should not contain sensitive data like PII (Personally Identifiable Information) or account login
-        //config.additionalInformation = "YOURADDITIONALINFORMATION"
-        
         // Use a custom document code which can be configured in the settings tab of the Merchant UI
         //config.customDocumentCode = "YOURCUSTOMDOCUMENTCODE"
         
         // Overrides the label for the document name (on Help Screen beside document icon)
         //config.documentName = "DOCUMENTNAME"
+        
+        // Set the following property to enable/disable data extraction for documents. (default: true)
+        config.enableExtraction = enableExtraction.isOn
         
         //Perform the following call as soon as your app’s view controller is initialized. Create the DocumentVerificationViewController instance by providing your Configuration with required merchant API token, merchant API secret and a delegate object.
         
@@ -65,7 +72,7 @@ class DocumentVerificationStartViewController: StartViewController, DocumentVeri
             }
         } catch {
             let err = error as NSError
-            UIAlertController.presentAlertView(withTitle: err.localizedDescription, message: err.userInfo[NSLocalizedFailureReasonErrorKey] as! String, cancelButtonTitle: "OK", completion: nil)
+            UIAlertController.presentAlertView(withTitle: err.localizedDescription, message: err.userInfo[NSLocalizedFailureReasonErrorKey] as? String ?? "", cancelButtonTitle: "OK", completion: nil)
         }
         
         //Localizing labels
@@ -76,7 +83,7 @@ class DocumentVerificationStartViewController: StartViewController, DocumentVeri
         //The API from Netverify is re-used to apply visual customization for DocumentVerification. Please have a look at the above section where DocumentVerificationViewController is created and configured.
         
         //You can get the current SDK version using the method below.
-        //print("%@", self.documentVerificationViewController.sdkVersion())
+        print("\(self.documentVerificationViewController?.sdkVersion() ?? "")")
     }
     
     @IBAction func startDocumentVerification() -> Void {
@@ -85,7 +92,7 @@ class DocumentVerificationStartViewController: StartViewController, DocumentVeri
         if let documentVC = self.documentVerificationViewController {
             self.present(documentVC, animated: true, completion: nil)
         } else {
-            print("DocumentVerificationViewController is nil")
+            showAlert(withTitle: "DocumentVerification Mobile SDK", message: "DocumentVerificationViewController is nil")
         }
     }
     
@@ -96,8 +103,8 @@ class DocumentVerificationStartViewController: StartViewController, DocumentVeri
      * @param scanReference The scanReference of the scan attempt
      **/
     func documentVerificationViewController(_ documentVerificationViewController: DocumentVerificationViewController, didFinishWithScanReference scanReference: String?) {
-        let message:String = String.init(format: "DocumentVerificationViewController finished successfully with scan reference: %@", scanReference!)
-        print("%@", message);
+        let message = "DocumentVerificationViewController finished successfully with scan reference: " + "\(scanReference ?? "")"
+        print(message)
         
         //Dismiss the SDK
         self.dismiss(animated: true, completion: {
@@ -110,8 +117,8 @@ class DocumentVerificationStartViewController: StartViewController, DocumentVeri
      * @param DocumentVerificationViewController The DocumentVerificationViewController instance
      * @param error The error describing the cause of the problematic situation
      **/
-    func documentVerificationViewController(_ documentVerificationViewController: DocumentVerificationViewController, didFinishWithError error: DocumentVerificationError?) {
-        print("DocumentVerificationViewController cancelled with error: %@", error?.message as String!);
+    func documentVerificationViewController(_ documentVerificationViewController: DocumentVerificationViewController, didFinishWithError error: DocumentVerificationError) {
+            print("DocumentVerificationViewController cancelled with error: %@", error.message)
         
         //Dismiss the SDK
         self.dismiss(animated: true, completion: nil)

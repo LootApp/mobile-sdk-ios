@@ -2,11 +2,33 @@
 
 # Transition guide for Document Verification
 
+This section only covers the breaking technical changes that should be considered when updating from the previous version.
+
+## 2.15.0
+No backward incompatible changes.
+
+## 2.14.0
+#### Removed document type USSS
+The document type for US social security card (USSS) was removed.
+
+#### Default Settings
+The default value for [`enableExtraction`](http://jumio.github.io/mobile-sdk-ios/Netverify/Classes/DocumentVerificationConfiguration.html#/c:objc(cs)DocumentVerificationConfiguration(py)enableExtraction) was changed to `YES`. Please make sure that it is explicitly set to NO in case a scan without extraction should be performed. 
+
+## 2.13.0
+
+#### Changes in Localizable-DocumentVerification.strings
+- In addition to English, strings are now translated to Chinese (Simplified), Dutch, French, German and Spanish. Each .strings file can now be found in the specific *.lproj folders.
+- Minor adaptions in the english version for the help view headline in regards to the new languages supported for localisation.
+
+## 2.12.0
+
+#### Additional information property removed
+Property `additionalInformation` has been removed.
 
 ## 2.11.0
 
 #### New error codes
-Instead of `NSError` objects we now return `DocumentVerificationError` in `documentVerificationViewController:didFinishWithError:`. 
+Instead of `NSError` objects we now return `DocumentVerificationError` in `documentVerificationViewController:didFinishWithError:`.
 
 Please note, that `code` now is a NSString.
 Read more detailed information on this in the [Error Section](integration_document-verification.md#error)

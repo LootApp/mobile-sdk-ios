@@ -2,6 +2,23 @@
 
 # Transition guide for BAM Checkout
 
+This section only covers the breaking technical changes that should be considered when updating from the previous version.
+
+## 2.15.0
+No backward incompatible changes.
+
+## 2.14.0
+No backward incompatible changes.
+
+## 2.13.0
+BAMCheckoutCreditCardTypeStarbucks removed.
+
+#### Enums
+All enums were replaced by NS_ENUM macros to have better Swift support. When using Swift this Version will break when using [`BAMCheckoutCreditCardType`](http://jumio.github.io/mobile-sdk-ios/BAMCheckout/Enums/BAMCheckoutCreditCardType.html) or [`BAMCheckoutCreditCardTypes`](http://jumio.github.io/mobile-sdk-ios/BAMCheckout/Enums/BAMCheckoutCreditCardTypes.html).
+
+## 2.12.0
+No backward incompatible changes.
+
 ## 2.11.0
 No backward incompatible changes.
 
