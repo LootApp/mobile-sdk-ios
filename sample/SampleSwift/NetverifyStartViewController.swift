@@ -1,7 +1,7 @@
 //
 //  NetverifyStartViewController.swift
 //
-//  Copyright © 2018 Jumio Corporation All rights reserved.
+//  Copyright © 2019 Jumio Corporation All rights reserved.
 //
 
 import Netverify
@@ -27,6 +27,12 @@ class NetverifyStartViewController: StartViewController, NetverifyViewController
     }
     
     func createNetverifyController() -> Void {
+        
+        //prevent SDK to be initialized on Jailbroken devices
+        if JMDeviceInfo.isJailbrokenDevice() {
+            return
+        }
+        
         //Setup the Configuration for Netverify
         let config:NetverifyConfiguration = createNetverifyConfiguration()
         //Set the delegate that implements NetverifyViewControllerDelegate
@@ -40,7 +46,7 @@ class NetverifyStartViewController: StartViewController, NetverifyViewController
             }
         } catch {
             let err = error as NSError
-            UIAlertController.presentAlertView(withTitle: err.localizedDescription, message: err.userInfo[NSLocalizedFailureReasonErrorKey] as! String, cancelButtonTitle: "OK", completion: nil)
+            UIAlertController.presentAlertView(withTitle: err.localizedDescription, message: err.userInfo[NSLocalizedFailureReasonErrorKey] as? String ?? "", cancelButtonTitle: "OK", completion: nil)
         }
         
         if (UIDevice.current.userInterfaceIdiom == UIUserInterfaceIdiom.pad) {
@@ -62,17 +68,21 @@ class NetverifyStartViewController: StartViewController, NetverifyViewController
         //config.offlineToken = "YOUR_OFFLINE_TOKEN"
         
         // Use the following method to convert ISO 3166-1 alpha-2 into alpha-3 country code (optional)
-        //let alpha3CountryCode = ISOCountryConverter.convert(toAlpha3: "AT")
+        // let alpha3CountryCode = ISOCountryConverter.convert(toAlpha3: "AT")
         
         //You can specify issuing country (ISO 3166-1 alpha-3 country code) and/or ID types and/or document variant to skip their selection during the scanning process.
         //config.preselectedCountry = "AUT"
-        //config.preselectedDocumentTypes = NetverifyDocumentTypeAll
-        //let preselectedDocumentTypes:UInt32 = NetverifyDocumentTypePassport.rawValue | NetverifyDocumentTypeVisa.rawValue | NetverifyDocumentTypeIdentityCard.rawValue | NetverifyDocumentTypeDriverLicense.rawValue
-        //let combined = UInt(preselectedDocumentTypes)
-        //config.preselectedDocumentTypes = NetverifyDocumentType(rawValue: UInt32(combined))
+        
+        //var documentTypes: NetverifyDocumentType = []
+        //documentTypes.insert(.driverLicense)
+        //documentTypes.insert(.identityCard)
+        //documentTypes.insert(.passport)
+        //documentTypes.insert(.visa)
+
+        //config.preselectedDocumentTypes = documentTypes
         
         //When a selected country and ID type support more document variants (paper and plastic), you can specify the document variant in advance or let the user choose during the verification process.
-        //config.preselectedDocumentVariant = NetverifyDocumentVariantPlastic
+        //config.preselectedDocumentVariant = .plastic
         
         //The merchant scan reference allows you to identify the scan (max. 100 characters). Note: Must not contain sensitive data like PII (Personally Identifiable Information) or account login.
         //config.merchantScanReference = "YOURSCANREFERENCE"
@@ -96,9 +106,6 @@ class NetverifyStartViewController: StartViewController, NetverifyViewController
         //Configure your desired status bar style
         //config.statusBarStyle = UIStatusBarStyle.lightContent
         
-        //Additional information for this scan should not contain sensitive data like PII (Personally Identifiable Information) or account login
-        //config.additionalInformation = "YOURADDITIONALINFORMATION"
-        
         //Use the following method to only support IDs where data can be extracted on mobile only
         //config.dataExtractionOnMobileOnly = true
         
@@ -117,7 +124,7 @@ class NetverifyStartViewController: StartViewController, NetverifyViewController
         
         //UINavigationBar.netverifyAppearance().tintColor = UIColor.yellow
         //UINavigationBar.netverifyAppearance().barTintColor = UIColor.red
-        //UINavigationBar.netverifyAppearance().titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+        //UINavigationBar.netverifyAppearance().titleTextAttributes = [kCTForegroundColorAttributeName: UIColor.white] as [NSAttributedStringKey : Any]
         
         //NetverifyNavigationBarTitleImageView.netverifyAppearance().titleImage = UIImage.init(named: "<your-bamcheckout-navigation-bar-title-image>")
         
@@ -134,7 +141,7 @@ class NetverifyStartViewController: StartViewController, NetverifyViewController
         //NetverifyDocumentSelectionButton.netverifyAppearance().setBackgroundColor(UIColor.yellow, for: UIControlState.normal)
         //NetverifyDocumentSelectionButton.netverifyAppearance().setBackgroundColor(UIColor.red, for: UIControlState.highlighted)
         //NetverifyDocumentSelectionHeaderView.netverifyAppearance().backgroundColor = UIColor.brown
-        
+
         //NetverifyDocumentSelectionButton.netverifyAppearance().setIconColor(UIColor.red, for: UIControlState.normal)
         //NetverifyDocumentSelectionButton.netverifyAppearance().setIconColor(UIColor.yellow, for: UIControlState.highlighted)
         //NetverifyDocumentSelectionHeaderView.netverifyAppearance().iconColor = UIColor.magenta
@@ -172,8 +179,17 @@ class NetverifyStartViewController: StartViewController, NetverifyViewController
         //NetverifyScanOverlayView.netverifyAppearance().colorOverlayValid = UIColor.green
         //NetverifyScanOverlayView.netverifyAppearance().colorOverlayInvalid = UIColor.red
         
+        // Color for the face oval outline
+        //NetverifyScanOverlayView.netverifyAppearance().faceOvalColor = UIColor(red: 46/255.0, green: 255/255.0, blue: 71/255.0, alpha: 0.69)
+        // Color for the progress bars
+        //NetverifyScanOverlayView.netverifyAppearance().faceProgressColor = UIColor(red: 46/255.0, green: 255/255.0, blue: 71/255.0, alpha: 0.69)
+        // Color for the background of the feedback view
+        //NetverifyScanOverlayView.netverifyAppearance().faceFeedbackBackgroundColor = UIColor(red: 46/255.0, green: 255/255.0, blue: 71/255.0, alpha: 0.69)
+        // Color for the text of the feedback view
+        //NetverifyScanOverlayView.netverifyAppearance().faceFeedbackTextColor = UIColor(red: 46/255.0, green: 255/255.0, blue: 71/255.0, alpha: 0.69)
+
         //You can get the current SDK version using the method below.
-        //print("%@", self.netverifyViewController.sdkVersion())
+        //print("\(self.netverifyViewController?.sdkVersion() ?? "")")
         
         return config
     }
@@ -184,7 +200,7 @@ class NetverifyStartViewController: StartViewController, NetverifyViewController
         if let netverifyVC = self.netverifyViewController {
             self.present(netverifyVC, animated: true, completion: nil)
         } else {
-            print("NetverifyViewController is nil")
+            showAlert(withTitle: "Netverify Mobile SDK", message: "NetverifyViewController is nil")
         }
     }
     
@@ -208,7 +224,7 @@ class NetverifyStartViewController: StartViewController, NetverifyViewController
             }
         } catch {
             let err = error as NSError
-            UIAlertController.presentAlertView(withTitle: err.localizedDescription, message: err.userInfo[NSLocalizedFailureReasonErrorKey] as! String, cancelButtonTitle: "OK", completion: nil)
+            UIAlertController.presentAlertView(withTitle: err.localizedDescription, message: err.userInfo[NSLocalizedFailureReasonErrorKey] as? String ?? "", cancelButtonTitle: "OK", completion: nil)
         }
     }
     
@@ -236,16 +252,16 @@ class NetverifyStartViewController: StartViewController, NetverifyViewController
         let selectedDocumentType:NetverifyDocumentType = documentData.selectedDocumentType
         var documentTypeStr:String
         switch (selectedDocumentType) {
-        case NetverifyDocumentTypeDriverLicense:
+        case .driverLicense:
             documentTypeStr = "DL"
             break;
-        case NetverifyDocumentTypeIdentityCard:
+        case .identityCard:
             documentTypeStr = "ID"
             break;
-        case NetverifyDocumentTypePassport:
+        case .passport:
             documentTypeStr = "PP"
             break;
-        case NetverifyDocumentTypeVisa:
+        case .visa:
             documentTypeStr = "Visa"
             break;
         default:
@@ -265,21 +281,20 @@ class NetverifyStartViewController: StartViewController, NetverifyViewController
         //person
         let lastName:String? = documentData.lastName
         let firstName:String? = documentData.firstName
-        let middleName:String? = documentData.middleName
         let dateOfBirth:Date? = documentData.dob
         let gender:NetverifyGender = documentData.gender
         var genderStr:String;
         switch (gender) {
-            case NetverifyGenderUnknown:
+            case .unknown:
                 genderStr = "Unknown"
             
-            case NetverifyGenderF:
+            case .F:
                 genderStr = "female"
             
-            case NetverifyGenderM:
+            case .M:
                 genderStr = "male"
             
-            case NetverifyGenderX:
+            case .X:
                 genderStr = "Unspecified"
             
             default:
@@ -309,7 +324,6 @@ class NetverifyStartViewController: StartViewController, NetverifyViewController
         if (optionalData2 != nil) { message.appendFormat("\nOptional Data 2: %@", optionalData2!) }
         if (lastName != nil) { message.appendFormat("\nLast Name: %@", lastName!) }
         if (firstName != nil) { message.appendFormat("\nFirst Name: %@", firstName!) }
-        if (middleName != nil) { message.appendFormat("\nMiddle Name: %@", middleName!) }
         if (dateOfBirth != nil) { message.appendFormat("\ndob: %@", dateOfBirth! as CVarArg) }
         message.appendFormat("\nGender: %@", genderStr)
         if (originatingCountry != nil) { message.appendFormat("\nOriginating Country: %@", originatingCountry!) }
@@ -333,7 +347,9 @@ class NetverifyStartViewController: StartViewController, NetverifyViewController
         print(message)
         self.dismiss(animated: true, completion: {
             print(message)
-            self.showAlert(withTitle: "Netverify Mobile SDK", message: message as String!)
+            self.showAlert(withTitle: "Netverify Mobile SDK", message: message as String)
+            self.netverifyViewController?.destroy()
+            self.netverifyViewController = nil
             })
     }
     
@@ -344,9 +360,12 @@ class NetverifyStartViewController: StartViewController, NetverifyViewController
      * @param scanReference The scanReference of the scan attempt
      **/
     func netverifyViewController(_ netverifyViewController: NetverifyViewController, didCancelWithError error: NetverifyError?, scanReference: String?) {
-        print("NetverifyViewController cancelled with error: \(error?.message as String!), scanReference: \(String(describing: (scanReference != nil) ? scanReference as String! : "")))")
+        print("NetverifyViewController cancelled with error: " + "\(error?.message ?? "")" + "scanReference: " + "\(scanReference ?? "")")
         
         //Dismiss the SDK
-        self.dismiss(animated: true, completion: nil)
+        self.dismiss(animated: true) {
+            self.netverifyViewController?.destroy()
+            self.netverifyViewController = nil
+        }
     }
 }

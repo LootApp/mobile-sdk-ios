@@ -1,11 +1,12 @@
 //
 //  DocumentVerificationStartViewController.m
 //
-//  Copyright © 2018 Jumio Corporation All rights reserved.
+//  Copyright © 2019 Jumio Corporation All rights reserved.
 //
 
 #import "DocumentVerificationStartViewController.h"
 @import Netverify;
+#import <JumioCore/JMDeviceInfo.h>
 
 @interface DocumentVerificationStartViewController () <DocumentVerificationViewControllerDelegate>
 @property (nonatomic, strong) DocumentVerificationViewController *documentVerificationViewController;
@@ -14,6 +15,12 @@
 @implementation DocumentVerificationStartViewController
 
 - (void) createDocumentVerificationController {
+    
+    //prevent SDK to be initialized on Jailbroken devices
+    if ([JMDeviceInfo isJailbrokenDevice]) {
+        return;
+    }
+    
     //Setup the Configuration for DocumentVerification
     DocumentVerificationConfiguration *config = [DocumentVerificationConfiguration new];
     //Provide your API token
@@ -30,7 +37,7 @@
     config.country = @"AUT";
     
     //One of the configured DocumentTypeCodes: BC, BS, CAAP, CB, CCS, CRC, HCC, IC, LAG, LOAP,
-    //MEDC, MOAP, PB, SEL, SENC, SS, STUC, TAC, TR, UB, SSC, USSS, VC, VT, WWCC, CUSTOM
+    //MEDC, MOAP, PB, SEL, SENC, SS, STUC, TAC, TR, UB, SSC, VC, VT, WWCC, CUSTOM
     config.type = @"BC";
     
     //The merchant scan reference allows you to identify the scan (max. 100 characters). Note: Must not contain sensitive data like PII (Personally Identifiable Information) or account login.
@@ -51,14 +58,14 @@
     //Configure your desired status bar style
     //config.statusBarStyle = UIStatusBarStyleLightContent;
     
-    //Additional information for this scan should not contain sensitive data like PII (Personally Identifiable Information) or account login
-    //config.additionalInformation = @"YOURADDITIONALINFORMATION";
-    
     // Use a custom document code which can be configured in the settings tab of the Merchant UI
     //config.customDocumentCode = @"YOURCUSTOMDOCUMENTCODE";
     
     // Overrides the label for the document name (on Help Screen beside document icon)
     //config.documentName = @"DOCUMENTNAME";
+    
+    // Set the following property to enable/disable data extraction for documents. (default: YES) 
+     config.enableExtraction = self.enableExtraction.isOn;
     
     //Perform the following call as soon as your app’s view controller is initialized. Create the DocumentVerificationViewController instance by providing your Configuration with required merchant API token, merchant API secret and a delegate object.
     @try {
@@ -77,7 +84,7 @@
     //The API from Netverify is re-used to apply visual customization for DocumentVerification. Please have a look at the above section where DocumentVerificationViewController is created and configured.
     
     //You can get the current SDK version using the method below.
-    //NSLog(@"%@", [self.DocumentVerificationViewController sdkVersion]);
+    //NSLog(@"%@", [self.documentVerificationViewController sdkVersion]);
 }
 
 - (IBAction) startDocumentVerification: (id) sender {

@@ -1,11 +1,14 @@
 //
 //  NetverifyStartViewController.m
 //
-//  Copyright © 2018 Jumio Corporation All rights reserved.
+//  Copyright © 2019 Jumio Corporation All rights reserved.
 //
 
 #import "NetverifyStartViewController.h"
 @import Netverify;
+#import <JumioCore/JMDeviceInfo.h>
+
+#define RGBA(r, g, b, a) [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:a]
 
 @interface NetverifyStartViewController () <NetverifyViewControllerDelegate>
 @property (nonatomic, strong) NetverifyViewController *netverifyViewController;
@@ -17,6 +20,11 @@
  * Present the NetverifyViewController
  */
 - (void) createNetverifyController{
+    
+    //prevent SDK to be initialized on Jailbroken devices
+    if ([JMDeviceInfo isJailbrokenDevice]) {
+        return;
+    }
     
     //Setup the Configuration for Netverify
     NetverifyConfiguration *config = [NetverifyConfiguration new];
@@ -54,10 +62,10 @@
     //Callback URL (max. 255 characters) for the confirmation after the verification is completed. This setting overrides your Jumio merchant settings.
     //config.callbackUrl = @"https://www.example.com";
     
-    //Enable ID verification to receive a verification status and verified data positions (see Callback chapter). Note: Not possible for accounts configured as Fastfill only.
+    //Enable/disable ID verification to receive a verification status and verified data positions (see Callback chapter). Note: Not possible for accounts configured as Fastfill only.
     config.requireVerification = self.switchRequireVerification.isOn;
     
-    //You can enable face match during the ID verification for a specific transaction. This setting overrides your default Jumio merchant settings.
+    //You can enable/disable face match during the ID verification for a specific transaction. This setting overrides your default Jumio merchant settings.
     config.requireFaceMatch = self.switchRequireFaceMatch.isOn;
     
     //Set the default camera position
@@ -65,9 +73,6 @@
     
     //Configure your desired status bar style
     //config.statusBarStyle = UIStatusBarStyleLightContent;
-    
-    //Additional information for this scan should not contain sensitive data like PII (Personally Identifiable Information) or account login
-    //config.additionalInformation = @"YOURADDITIONALINFORMATION";
     
     //Use the following method to only support IDs where data can be extracted on mobile only
     //config.dataExtractionOnMobileOnly = YES;
@@ -151,6 +156,15 @@
     //[[NetverifyScanOverlayView netverifyAppearance] setColorOverlayValid: [UIColor greenColor]];
     //[[NetverifyScanOverlayView netverifyAppearance] setColorOverlayInvalid: [UIColor redColor]];
     
+    // Color for the face oval outline
+    //[[NetverifyScanOverlayView netverifyAppearance] setFaceOvalColor: RGBA(255,92,224,1)];
+    // Color for the progress bars
+    //[[NetverifyScanOverlayView netverifyAppearance] setFaceProgressColor: RGBA(255,92,224,1)];
+    // Color for the background of the feedback view
+    //[[NetverifyScanOverlayView netverifyAppearance] setFaceFeedbackBackgroundColor: RGBA(255,92,224,1)];
+    // Color for the text of the feedback view
+    //[[NetverifyScanOverlayView netverifyAppearance] setFaceFeedbackTextColor: RGBA(255,92,224,1)];
+    
     //You can get the current SDK version using the method below.
     //NSLog(@"%@", [self.netverifyViewController sdkVersion]);
 }
@@ -218,7 +232,6 @@
     //person
     NSString *lastName = documentData.lastName;
     NSString *firstName = documentData.firstName;
-    NSString *middleName = documentData.middleName;
     NSDate *dateOfBirth = documentData.dob;
     NetverifyGender gender = documentData.gender;
     NSString *genderStr;
@@ -260,7 +273,6 @@
     if (optionalData2) [message appendFormat:@"\nOptional Data 2: %@", optionalData2];
     if (lastName) [message appendFormat:@"\nLast Name: %@", lastName];
     if (firstName) [message appendFormat:@"\nFirst Name: %@", firstName];
-    if (middleName) [message appendFormat:@"\nMiddle Name: %@", middleName];
     if (dateOfBirth) [message appendFormat:@"\ndob: %@", dateOfBirth];
     [message appendFormat:@"\nGender: %@", genderStr];
     if (originatingCountry) [message appendFormat:@"\nOriginating Country: %@", originatingCountry];
@@ -284,6 +296,10 @@
     [self dismissViewControllerAnimated: YES completion: ^{
         NSLog(@"%@",message);
         [self showAlertWithTitle:@"Netverify Mobile SDK" message:message];
+        
+        //destroy the instance to properly clean up the SDK
+        [self.netverifyViewController destroy];
+        self.netverifyViewController = nil;
     }];
 }
 
@@ -296,7 +312,11 @@
 - (void) netverifyViewController:(NetverifyViewController *)netverifyViewController didCancelWithError:(NetverifyError * _Nullable)error scanReference:(NSString * _Nullable)scanReference {
     NSLog(@"NetverifyViewController cancelled with error: %@, scanReference: %@", error.message, scanReference);
     //Dismiss the SDK
-    [self dismissViewControllerAnimated: YES completion: nil];
+    [self dismissViewControllerAnimated: YES completion: ^{
+        //destroy the instance to properly clean up the SDK
+        [self.netverifyViewController destroy];
+        self.netverifyViewController = nil;
+    }];
 }
 
 @end

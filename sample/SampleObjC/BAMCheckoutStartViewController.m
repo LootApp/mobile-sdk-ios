@@ -1,12 +1,13 @@
 //
 //  BAMCheckoutStartViewController.m
 //
-//  Copyright © 2018 Jumio Corporation All rights reserved.
+//  Copyright © 2019 Jumio Corporation All rights reserved.
 //
 
 #import "BAMCheckoutStartViewController.h"
 #import "CustomScanOverlayViewController.h"
 @import BAMCheckout;
+#import <JumioCore/JMDeviceInfo.h>
 
 @interface BAMCheckoutStartViewController () <BAMCheckoutViewControllerDelegate>
 @property (nonatomic, strong) BAMCheckoutViewController *bamCheckoutViewController;
@@ -15,6 +16,11 @@
 @implementation BAMCheckoutStartViewController
 
 - (void) createBAMCheckoutController{
+    
+    //prevent SDK to be initialized on Jailbroken devices
+    if ([JMDeviceInfo isJailbrokenDevice]) {
+        return;
+    }
     
     //Setup the Configuration for BAMCheckout
     BAMCheckoutConfiguration *config = [BAMCheckoutConfiguration new];
