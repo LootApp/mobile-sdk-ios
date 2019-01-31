@@ -81,10 +81,24 @@ platform :ios do
         release_version: target_version
       )
 
-      # Umoove
+      # BAMCheckout
       insert_entry(
-        file_path: "Umoove.json",
-        framework_name: "Umoove",
+        file_path: "BAMCheckout.json",
+        framework_name: "BAMCheckout",
+        release_version: target_version
+      )
+
+      # NetverifyFace
+      insert_entry(
+        file_path: "NetverifyFace.json",
+        framework_name: "NetverifyFace",
+        release_version: target_version
+      )
+
+      # ZoomAuthenticationHybrid
+      insert_entry(
+        file_path: "ZoomAuthenticationHybrid.json",
+        framework_name: "ZoomAuthenticationHybrid",
         release_version: target_version
       )
   end
@@ -117,12 +131,30 @@ platform :ios do
     )
     FileUtils.remove_dir("../export/Carthage") unless !File.directory?("../export/Carthage")
 
-    # Umoove
+    # BAMCheckout
     FileUtils.mkdir_p "../export/Carthage/iOS"
-    FileUtils.cp_r "../frameworks/Umoove.framework", "../export/Carthage/iOS/Umoove.framework"
+    FileUtils.cp_r "../frameworks/BAMCheckout.framework", "../export/Carthage/iOS/BAMCheckout.framework"
     zip(
       path: "export/Carthage",
-      output_path: "export/Umoove.framework.zip"
+      output_path: "export/BAMCheckout.framework.zip"
+    )
+    FileUtils.remove_dir("../export/Carthage") unless !File.directory?("../export/Carthage")
+
+    # Netverify Face
+    FileUtils.mkdir_p "../export/Carthage/iOS"
+    FileUtils.cp_r "../frameworks/NetverifyFace.framework", "../export/Carthage/iOS/NetverifyFace.framework"
+    zip(
+      path: "export/Carthage",
+      output_path: "export/NetverifyFace.framework.zip"
+    )
+    FileUtils.remove_dir("../export/Carthage") unless !File.directory?("../export/Carthage")
+
+    # Zoom Authentication Hybrid
+    FileUtils.mkdir_p "../export/Carthage/iOS"
+    FileUtils.cp_r "../frameworks/ZoomAuthenticationHybrid.framework", "../export/Carthage/iOS/ZoomAuthenticationHybrid.framework"
+    zip(
+      path: "export/Carthage",
+      output_path: "export/ZoomAuthenticationHybrid.framework.zip"
     )
     FileUtils.remove_dir("../export/Carthage") unless !File.directory?("../export/Carthage")
   end
